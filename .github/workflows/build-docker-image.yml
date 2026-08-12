@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       - name: get tags
         id: meta
-        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175 # v4.6.0
+        uses: chainguard-actions/docker-metadata-action@83bd1ffc7c8f40b337dabeea4c0f0129f09b0477 # v4.6.0
         with:
           # list of Docker images to use as base name for tags
           images: |
