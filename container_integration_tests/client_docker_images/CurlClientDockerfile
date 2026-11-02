@@ -1,6 +1,7 @@
-FROM ubuntu:20.04
+FROM 694713800774.dkr.ecr.us-east-2.amazonaws.com/golden/chainguard-base:20230214
 
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
+    bash \
     curl \
     nghttp2 \
     jq
