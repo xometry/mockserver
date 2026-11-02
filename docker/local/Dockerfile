@@ -5,8 +5,8 @@
 # http://www.mock-server.com
 #
 
-# runtime image https://console.cloud.google.com/gcr/images/distroless/global/java17
-FROM gcr.io/distroless/java17:nonroot
+# runtime image: golden JDK 17 (Chainguard, distroless, uid 65532)
+FROM 694713800774.dkr.ecr.us-east-2.amazonaws.com/golden/jdk:openjdk-17
 
 # maintainer details
 MAINTAINER James Bloom "jamesdbloom@gmail.com"
@@ -18,7 +18,7 @@ EXPOSE 1080
 COPY mockserver-netty-jar-with-dependencies.jar /
 
 # don't run MockServer as root
-USER nonroot
+USER 65532
 
 ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-cp", "/mockserver-netty-jar-with-dependencies.jar:/libs/*", "-Dmockserver.propertyFile=/config/mockserver.properties", "org.mockserver.cli.Main"]
 

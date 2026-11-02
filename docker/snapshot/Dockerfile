@@ -8,7 +8,7 @@
 ARG source=download
 
 # build image
-FROM alpine as download
+FROM 694713800774.dkr.ecr.us-east-2.amazonaws.com/golden/chainguard-base:20230214 as download
 
 # download jar
 RUN apk add --update openssl ca-certificates bash wget
@@ -24,7 +24,7 @@ RUN wget --max-redirect=10 -O netty-tcnative-boringssl-static.jar "https://oss.s
 RUN unzip netty-tcnative-boringssl-static.jar
 
 # build image
-FROM alpine as copy
+FROM 694713800774.dkr.ecr.us-east-2.amazonaws.com/golden/chainguard-base:20230214 as copy
 
 # copy jar
 COPY mockserver-netty-jar-with-dependencies.jar .
@@ -35,8 +35,8 @@ RUN unzip netty-tcnative-boringssl-static.jar
 
 FROM ${source} as intermediate
 
-# runtime image https://console.cloud.google.com/gcr/images/distroless/global/java17
-FROM gcr.io/distroless/java17:debug-nonroot
+# runtime image: golden JDK 17 -dev (Chainguard, with shell for debugging, uid 65532)
+FROM 694713800774.dkr.ecr.us-east-2.amazonaws.com/golden/jdk:openjdk-17-dev
 
 # maintainer details
 MAINTAINER James Bloom "jamesdbloom@gmail.com"
@@ -46,10 +46,10 @@ EXPOSE 1080
 
 # copy in jar
 COPY --from=intermediate mockserver-netty-jar-with-dependencies.jar /
-COPY --from=intermediate META-INF/native/libnetty_tcnative_linux_x86_64.so /usr/lib/x86_64-linux-gnu/libnetty_tcnative_linux_x86_64.so
+COPY --from=intermediate META-INF/native/libnetty_tcnative_linux_x86_64.so /usr/lib/libnetty_tcnative_linux_x86_64.so
 
 # don't run MockServer as root
-USER nonroot
+USER 65532
 
 ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-cp", "/mockserver-netty-jar-with-dependencies.jar:/libs/*", "-Dmockserver.propertyFile=/config/mockserver.properties", "org.mockserver.cli.Main"]
 
